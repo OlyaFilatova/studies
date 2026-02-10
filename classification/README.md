@@ -1,4 +1,4 @@
-# Task 1
+# Classification
 
 Explores the following classification models using the publicly available [MNIST](https://www.kaggle.com/datasets/hojjatk/mnist-dataset) dataset:
 
@@ -63,8 +63,8 @@ Follow these steps to set up and run the project:
 
 2. **Clone the repository**
    ```bash
-   git clone https://github.com/OlyaFilatova/ds-practice.git
-   cd ds-practice/task_1
+   git clone https://github.com/OlyaFilatova/studies.git
+   cd studies/classification
    ```
 
 3. **Create and activate a virtual environment**

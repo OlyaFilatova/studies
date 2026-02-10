@@ -1,4 +1,4 @@
-# Task 4
+# gRPC guides
 
 Explores gRPC functionality described at https://grpc.io/docs/guides/.
 
