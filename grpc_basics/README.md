@@ -1,4 +1,4 @@
-# Task 3
+# gRPC Basics
 
 Explores basic functionality of gRPC framework https://grpc.io/docs/languages/python/.
 

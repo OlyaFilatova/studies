@@ -1,4 +1,4 @@
-# Task 2
+# NLP and CV
 
 Explores NLP and CV techniques with use of a publicly available [animals10](https://www.kaggle.com/datasets/alessiocorrado99/animals10) dataset.
 
@@ -58,8 +58,8 @@ Follow these steps to set up and run the project:
 
 1. **Clone the repository**
 	```bash
-    git clone https://github.com/OlyaFilatova/ds-practice.git
-    cd ds-practice/task_2
+    git clone https://github.com/OlyaFilatova/studies.git
+    cd studies/nlp_n_cv
 	```
 
 1. **Create and activate a virtual environment**
