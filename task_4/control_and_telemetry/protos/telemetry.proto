@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package telemetry;
+
+service TelemetryService {
+  rpc SubscribeTelemetry(TelemetrySubscription)
+      returns (stream TelemetryMessage);
+}
+
+message TelemetrySubscription {
+  repeated string sensor_ids = 1;
+}
+
+message TelemetryMessage {
+  string sensor_id = 1;
+  double value = 2;
+  int64 timestamp_unix_ms = 3;
+}

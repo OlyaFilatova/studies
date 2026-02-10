@@ -1,0 +1,245 @@
+syntax = "proto3";
+
+/*
+ * ============================
+ *  Enumerations
+ * ============================
+ */
+
+/*
+ Status codes for general device operations.
+ */
+enum StatusCode {
+  // Operation completed successfully.
+  SUCCESS = 0;
+
+  // The device already exists (during registration).
+  ALREADY_EXISTS = 1;
+
+  // The device was not found.
+  NOT_FOUND = 2;
+
+  // The client sent invalid or missing fields.
+  INVALID_INFO = 3;
+
+  // Permission or authentication failed.
+  PERMISSION_DENIED = 4;
+
+  // Server encountered an internal error.
+  SERVER_ERROR = 5;
+}
+
+/*
+ * ============================
+ *  Common messages
+ * ============================
+ */
+
+/*
+ * Empty placeholder message for RPCs that do not require input.
+ */
+message Empty {}
+
+/*
+ * Represents a device identity.
+ */
+message DeviceId {
+  // Unique device identifier.
+  string id = 1;
+}
+
+/*
+ * Represents a device with metadata.
+ */
+message DeviceInfo {
+  // Unique device identifier.
+  string id = 1;
+
+  // Human-readable name of the device.
+  string name = 2;
+
+  // Device category/type (e.g., "thermostat", "switch", "sensor").
+  string type = 3;
+}
+
+/*
+ * Response for device management operations.
+ */
+message DeviceResponse {
+  // Machine-readable status code.
+  StatusCode code = 1;
+
+  // Human-readable description of the operation result.
+  string message = 2;
+}
+
+/*
+ * A list of registered devices.
+ */
+message DeviceList {
+  // Repeated list of device metadata.
+  repeated DeviceInfo devices = 1;
+}
+
+/*
+ * ============================
+ *  Device management service
+ * ============================
+ */
+
+/*
+ * Handles registering, listing, or removing IoT devices.
+ */
+service DeviceManager {
+
+  /*
+   * Registers a new IoT device.
+   */
+  rpc RegisterDevice(DeviceInfo) returns (DeviceResponse);
+
+  /*
+   * Returns a list of all registered devices.
+   */
+  rpc ListDevices(Empty) returns (DeviceList);
+
+  /*
+   * Deregisters an existing IoT device.
+   */
+  rpc DeregisterDevice(DeviceId) returns (DeviceResponse);
+}
+
+/*
+ * ============================
+ *  Device control service
+ * ============================
+ */
+
+/*
+ Handles sending commands to IoT devices.
+ */
+service DeviceControl {
+
+  /*
+   Sends a single command to a device.
+   */
+  rpc SendCommand(CommandRequest) returns (CommandResponse);
+
+  /*
+   Streams command responses for a device in real-time.
+   Typical use: control panels subscribing to command execution updates.
+   */
+  rpc StreamDeviceCommands(DeviceId) returns (stream CommandResponse);
+}
+
+/*
+ Request to send a command to a device.
+ */
+message CommandRequest {
+  // Target device identifier.
+  string device_id = 1;
+
+  // Command name (e.g., "turn_on", "set_temperature").
+  string command = 2;
+
+  // Additional command parameters.
+  map<string, string> parameters = 3;
+}
+
+/*
+ Response to a command execution.
+ */
+message CommandResponse {
+  // Device affected by the command.
+  string device_id = 1;
+
+  // Whether the command was executed successfully.
+  bool success = 2;
+
+  // Human-readable result message.
+  string message = 3;
+}
+
+/*
+ * ============================
+ *  Device monitoring service
+ * ============================
+ */
+
+/*
+ Streams sensor data from IoT devices and allows clients to send configuration updates.
+ Uses bidirectional streaming.
+ */
+service DeviceMonitor {
+
+  /*
+   Allows clients to send sensor subscription requests / config messages,
+   and receive continuous sensor updates in return.
+  
+   - Client -> Server: sensor type preferences, sampling interval, etc.
+   - Server -> Client: real-time sensor readings.
+   */
+  rpc StreamSensorData(stream SensorRequest)
+      returns (stream SensorData);
+}
+
+/*
+ Client -> Server message for streaming sensor configuration.
+ */
+message SensorRequest {
+  // Target device.
+  string device_id = 1;
+
+  // Sensor metrics to subscribe to (e.g., "temperature", "humidity").
+  repeated string metrics = 2;
+
+  // Desired sampling interval in milliseconds.
+  int32 sample_interval_ms = 3;
+}
+
+/*
+ Server -> Client message with actual sensor readings.
+ */
+message SensorData {
+  // Device from which the data originates.
+  string device_id = 1;
+
+  // Key-value map of sensor readings (e.g., {"temperature": 21.5}).
+  map<string, double> readings = 2;
+
+  // Timestamp in UNIX epoch milliseconds.
+  int64 timestamp = 3;
+}
+
+/*
+ * ============================
+ *  Alerts / Notifications
+ * ============================
+ */
+
+/*
+ Real-time alert subscription service.
+ */
+service Alerts {
+
+  /*
+   Streams alerts for a given device when thresholds or rules are triggered.
+   */
+  rpc SubscribeAlerts(DeviceId) returns (stream Alert);
+}
+
+/*
+ Represents an alert triggered by a device.
+ */
+message Alert {
+  // Device originating the alert.
+  string device_id = 1;
+
+  // Type/category of the alert (e.g., "temperature_high").
+  string type = 2;
+
+  // Human-readable description of the alert.
+  string message = 3;
+
+  // Timestamp in UNIX epoch milliseconds.
+  int64 timestamp = 4;
+}

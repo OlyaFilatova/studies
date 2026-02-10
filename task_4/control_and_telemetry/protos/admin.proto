@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package admin;
+
+service AdminService {
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  rpc Restart(RestartRequest) returns (RestartResponse);
+}
+
+message GetStatusRequest {
+}
+
+message GetStatusResponse {
+  string status = 1;
+}
+
+message RestartRequest {
+}
+
+message RestartResponse {
+  bool accepted = 1;
+}

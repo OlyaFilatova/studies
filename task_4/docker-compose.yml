@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  # ---------------------------------------------------------
+  # SERVER CONTAINER
+  # ---------------------------------------------------------
+  server_container:
+    container_name: server_container
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "50051:50051"
+    networks:
+      - robotics_net
+
+  # ---------------------------------------------------------
+  # CLIENT CONTAINER
+  # ---------------------------------------------------------
+  client_container:
+    container_name: client_container
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    networks:
+      - robotics_net
+    environment:
+      - BACKEND_URL=server_container:50051
+
+    depends_on:
+      - server_container
+
+networks:
+  robotics_net:
+    driver: bridge

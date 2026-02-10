@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package common;
+
+enum MotorDirection {
+  MOTOR_DIRECTION_UNSPECIFIED = 0;
+  FORWARD = 1;
+  BACKWARD = 2;
+  STOP = 3;
+}
+
+message MotorCommand {
+  int32 motor_id = 1;
+  MotorDirection direction = 2;
+  float speed = 3; // 0.0 – 1.0
+}
+
+message RobotState {
+  bool emergency_stop = 1;
+  float battery_level = 2;
+}

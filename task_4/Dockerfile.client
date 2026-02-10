@@ -1,0 +1,40 @@
+# ---------------------------------------------------------
+# CLIENT CONTAINER
+# ---------------------------------------------------------
+FROM python:3.11-slim
+
+# -------------------------
+# ENVIRONMENT
+# -------------------------
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /app
+
+# -------------------------
+# SYSTEM DEPENDENCIES
+# -------------------------
+RUN apt-get update && apt-get install -y
+
+# -------------------------
+# PYTHON DEPENDENCIES
+# -------------------------
+COPY ./requirements.txt /tmp/requirements.txt
+
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r /tmp/requirements.txt
+
+# -------------------------
+# COPY APPLICATION CODE
+# -------------------------
+COPY ./control_and_telemetry/__init__.py /app/control_and_telemetry/__init__.py
+COPY ./control_and_telemetry/grpc_python /app/control_and_telemetry/grpc_python
+COPY ./control_and_telemetry/auth /app/control_and_telemetry/auth
+COPY ./control_and_telemetry/security /app/control_and_telemetry/security
+COPY ./control_and_telemetry/client /app/control_and_telemetry/client
+
+# -------------------------
+# DEFAULT COMMAND
+# -------------------------
+ENV PYTHONPATH=/app/control_and_telemetry/grpc_python
+ENTRYPOINT ["python", "-m", "control_and_telemetry.client.client"]
